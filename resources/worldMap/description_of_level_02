@@ -1,0 +1,21 @@
+Descriptipon:
+
+W 	- 	INVISIBLE WALL (UNDERROUND tILE 2)
+
+A 	- 	AIR
+
+P 	- 	PLAYER
+
+// ENEMY
+
+B1 	- 	BOSS      (WIZZARD)
+
+// ENVIRONMENT
+
+S -
+
+L1 - LAVA
+
+U1 - JUNGLE TILE
+
+J1 - JUNGLE SPRITE(SMALL)
