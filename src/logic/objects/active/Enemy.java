@@ -8,7 +8,7 @@ public class Enemy extends CharacterImpl {
 
     public Enemy() {
         SPEED = 5;
-        animation = new Animation();
+        animation = new Animation("golem%s/%d.png", 11);
         animation.init();
     }
 

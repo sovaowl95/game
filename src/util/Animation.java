@@ -9,33 +9,85 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class Animation {
-    private ArrayList<BufferedImage> imagesCharacterWalk;
-    private CharacterThreadAnimation thread;
+    private String path;
+    private int numOfFrames;
+    private ArrayList<BufferedImage> imagesCharacterRun;
+    private ArrayList<BufferedImage> imagesCharacterStay;
+    private CharacterThreadAnimation threadRun;
+    private CharacterThreadAnimation threadStay;
+
+    public Animation(String path, int numOfFrames) {
+        this.path = path;
+        this.numOfFrames = numOfFrames;
+    }
 
     public void init() {
-        imagesCharacterWalk = new ArrayList<>();
+        imagesCharacterRun = new ArrayList<>();
         loadCharacterMoveAnimations();
-        thread = new CharacterThreadAnimation(imagesCharacterWalk.size());
-        thread.start();
+
+        imagesCharacterStay = new ArrayList<>();
+        loadCharacterStayAnimations();
+
+        threadRun = new CharacterThreadAnimation(imagesCharacterRun.size());
+        threadRun.start();
+
+        threadStay = new CharacterThreadAnimation(imagesCharacterStay.size());
+        threadStay.start();
     }
 
     private void loadCharacterMoveAnimations() {
-        for (int i = 0; i < 10; i++) {
-            BufferedImage bufferedImage = ImageLoader.loadImage("hero2/" + i + ".png");
-            imagesCharacterWalk.add(bufferedImage);
+        for (int i = 0; i < numOfFrames; i++) {
+            BufferedImage bufferedImage = ImageLoader.loadImage(String.format(path, "_run", i));
+            imagesCharacterRun.add(bufferedImage);
+        }
+    }
+
+    private void loadCharacterStayAnimations() {
+        for (int i = 0; i < numOfFrames; i++) {
+            BufferedImage bufferedImage = ImageLoader.loadImage(String.format(path, "_stay", i));
+            imagesCharacterStay.add(bufferedImage);
         }
     }
 
 
     //false = left;
     //true = right;
-    public BufferedImage getImage(boolean direction) {
-        int frameNum = thread.getFrameNum();
+    public BufferedImage getRunImage(boolean direction) {
+        threadStay.setFrameNum(0);
+        int frameNum = threadRun.getFrameNum();
         BufferedImage image;
         if (direction) {
-            image = imagesCharacterWalk.get(frameNum);
+            image = imagesCharacterRun.get(frameNum);
         } else {
-            BufferedImage bufferedImage = imagesCharacterWalk.get(frameNum);
+            BufferedImage bufferedImage = imagesCharacterRun.get(frameNum);
+            AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+            tx.translate(-bufferedImage.getWidth(null), 0);
+            AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+            bufferedImage = op.filter(bufferedImage, null);
+            image = bufferedImage;
+        }
+
+        AffineTransform tx = new AffineTransform();
+        double xScale = Game.game.getHero().getCharacterWidth() * 1.0 / image.getWidth();
+        double yScale = Game.game.getHero().getCharacterHeight() * 1.0 / image.getHeight();
+        tx.scale(xScale, yScale);
+        AffineTransformOp scale = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+        BufferedImage res = new BufferedImage(
+                Game.game.getHero().getCharacterWidth(),
+                Game.game.getHero().getCharacterHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+        res = scale.filter(image, res);
+        return res;
+    }
+
+    public BufferedImage getStayImage(boolean direction) {
+        threadRun.setFrameNum(0);
+        int frameNum = threadStay.getFrameNum();
+        BufferedImage image;
+        if (direction) {
+            image = imagesCharacterStay.get(frameNum);
+        } else {
+            BufferedImage bufferedImage = imagesCharacterStay.get(frameNum);
             AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
             tx.translate(-bufferedImage.getWidth(null), 0);
             AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
@@ -72,6 +124,9 @@ class CharacterThreadAnimation extends Thread {
 
     int getFrameNum() {
         return frameNum;
+    }
+    void setFrameNum(int num){
+        frameNum = num;
     }
 
     @Override

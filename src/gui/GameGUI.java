@@ -1,14 +1,16 @@
 package gui;
 
 import logic.Game;
+import logic.objects.GameObject;
 import logic.objects.active.Enemy;
-import logic.world.Environment;
+import util.Constants;
 import util.MapExplaining;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class GameGUI extends JPanel implements Runnable {
     private Game game;
@@ -19,7 +21,7 @@ public class GameGUI extends JPanel implements Runnable {
 
     private int translateX;
     private int translateY;
-    //private BufferedImage img;
+
 
     public void init(int width, int height) {
         this.width = width;
@@ -32,7 +34,7 @@ public class GameGUI extends JPanel implements Runnable {
         setBackground(Color.black);
         setFocusable(true);
         requestFocusInWindow();
-
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     }
 
     public void unpause() {
@@ -52,20 +54,18 @@ public class GameGUI extends JPanel implements Runnable {
 
     @Override
     public void run() {
-        long startTime = System.currentTimeMillis();
-        long currTime = startTime;
-        long elapsedTime;
-
-
+        long startFrameTime;
+        long endFrameTime;
         while (!game.isPause()) {
-            elapsedTime = System.currentTimeMillis() - currTime;
-            currTime += elapsedTime;
+            startFrameTime = System.currentTimeMillis();
             repaint();
-            //todo: frame time
+            endFrameTime = System.currentTimeMillis();
+            long sleepTime;
+            sleepTime= Constants.FRAME_TIME - (endFrameTime - startFrameTime);
             try {
-                Thread.sleep(5);
-            } catch (InterruptedException ex) {
-                System.err.println("Failed to sleep...");
+                TimeUnit.MILLISECONDS.sleep(sleepTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -78,7 +78,7 @@ public class GameGUI extends JPanel implements Runnable {
         double x = game.getHero().getX() + game.getHero().getCharacterWidth() / 2;
 //        double y = game.getHero().getY();
 
-        int mapLength = game.getEnvironment().getMap()[0].length * Game.SIZE;
+        int mapLength = game.getEnvironment().getEnviroment()[0].length * Game.SIZE;
 
 //        System.out.println("---");
 //        System.out.println("width = " + width);
@@ -143,7 +143,7 @@ public class GameGUI extends JPanel implements Runnable {
     private void drawBack(Graphics g) {
         //https://stackoverflow.com/questions/658059/graphics-drawimage-in-java-is-extremely-slow-on-some-computers-yet-much-faster
 //        long time = System.currentTimeMillis();
-        List<Environment> allEnvironment = game.getEnvironment().getAllEnvironment();
+        List<GameObject> allEnvironment = game.getEnvironment().getAllEnvironment();
         for (int i = 0; i < allEnvironment.size(); i++) {
             BufferedImage image = allEnvironment.get(i).getImage();
             int x = (int) allEnvironment.get(i).getX();
@@ -160,7 +160,7 @@ public class GameGUI extends JPanel implements Runnable {
     }
 
     private void drawMap(Graphics g) {
-        String[][] mass = game.getEnvironment().getMap();
+        String[][] mass = game.getEnvironment().getEnviroment();
         for (int i = 0; i < mass.length; i++) {
             for (int j = 0; j < mass[i].length; j++) {
                 BufferedImage imageByExp = MapExplaining.getImageByExp(mass[i][j]);
@@ -170,7 +170,7 @@ public class GameGUI extends JPanel implements Runnable {
     }
 
     private void drawTopMap(Graphics g) {
-        String[][] mass = game.getEnvironment().getMap();
+        String[][] mass = game.getEnvironment().getEnviroment();
         for (int i = 0; i < mass.length; i++) {
             for (int j = 0; j < mass[i].length; j++) {
                 BufferedImage imageByExp = MapExplaining.getImageByExp(mass[i][j]);
@@ -180,6 +180,4 @@ public class GameGUI extends JPanel implements Runnable {
             }
         }
     }
-
-
 }

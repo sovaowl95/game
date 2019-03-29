@@ -29,6 +29,7 @@ public class Game implements Runnable {
         keyMaps.put((int) 'a', false);
         keyMaps.put((int) 'd', false);
         keyMaps.put((int) ' ', false);
+        keyMaps.put(-1, false);
         hero = new Hero();
         enemiesArrayList = new ArrayList<>();
         environment = new EnvironmentCollection(level);
@@ -62,6 +63,10 @@ public class Game implements Runnable {
 
         if (num == ' ') {
             keyMaps.put((int) ' ', status);
+        }
+
+        if (num == -1){
+            keyMaps.put(-1, status);
         }
     }
 

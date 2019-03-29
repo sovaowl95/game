@@ -1,8 +1,11 @@
 package logic.world;
 
 import logic.Game;
+import logic.objects.GameObject;
+import logic.objects.Item;
 import logic.objects.active.Enemy;
 import util.Constants;
+import util.ItemsExplaining;
 import util.MapExplaining;
 
 import java.io.BufferedReader;
@@ -11,9 +14,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EnvironmentCollection {
-    private List<Environment> allEnvironment;
+    private List<GameObject> allEnvironment;
 
     private int level;
     public static String[][] map;
@@ -32,6 +36,7 @@ public class EnvironmentCollection {
         spawnEnemies();
         changeHeroPointToAir();
         initEnviroment();
+        spawnItems();
     }
 
 
@@ -117,12 +122,20 @@ public class EnvironmentCollection {
         }
     }
 
+    private void spawnItems() {
+        Item item = new Item("healingPotion_01", ItemsExplaining.getImageByExp("healingPotion_01"));
+        item.setX(Game.game.getHero().getX() + 100);
+        item.setY(Game.game.getHero().getY());
+        allEnvironment.add(item);
+
+    }
+
     //
-    public List<Environment> getAllEnvironment() {
+    public List<GameObject> getAllEnvironment() {
         return allEnvironment;
     }
 
-    public String[][] getMap() {
+    public String[][] getEnviroment() {
         return map;
     }
 

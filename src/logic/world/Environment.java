@@ -8,12 +8,10 @@ import java.awt.image.BufferedImage;
 
 
 abstract public class Environment extends GameObject {
-    String name;
 
 
     public Environment(String name, BufferedImage bufferedImage) {
-        this.name = name;
-        image = bufferedImage;
+        super(name, bufferedImage);
     }
 
     @Override

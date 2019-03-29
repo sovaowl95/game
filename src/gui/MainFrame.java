@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class MainFrame extends JFrame{
     private int width;
@@ -54,6 +56,33 @@ public class MainFrame extends JFrame{
             @Override
             public void keyReleased(KeyEvent e) {
                 Game.game.setKeyStatus(e.getKeyCode(), false);
+            }
+        });
+
+        addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+//                Game.game.setKeyStatus(-1, true);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                Game.game.setKeyStatus(-1, true);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                Game.game.setKeyStatus(-1, false);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+
             }
         });
 

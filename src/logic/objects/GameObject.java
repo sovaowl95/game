@@ -3,10 +3,23 @@ package logic.objects;
 import java.awt.image.BufferedImage;
 
 abstract public class GameObject {
+    protected String name;
     protected double x;
     protected double y;
     protected BufferedImage image;
     protected int SPEED = 10;
+
+    protected boolean canJump = true;
+    protected boolean inJump = false;
+
+    public  GameObject(){
+
+    }
+
+    public GameObject(String name, BufferedImage bufferedImage) {
+        this.name = name;
+        image = bufferedImage;
+    }
 
     public double getX() {
         return x;
@@ -33,4 +46,6 @@ abstract public class GameObject {
     }
 
     abstract public void update();
+
+
 }

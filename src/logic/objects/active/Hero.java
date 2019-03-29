@@ -9,8 +9,9 @@ import java.util.HashMap;
 
 public class Hero extends CharacterImpl {
     public Hero() {
+        super();
         SPEED = 5;
-        animation = new Animation();
+        animation = new Animation("hero2%s/%d.png", 10);
         animation.init();
     }
 
@@ -37,7 +38,7 @@ public class Hero extends CharacterImpl {
 
     @Override
     public void attack1() {
-
+        //todo:
     }
 
     @Override
@@ -52,6 +53,7 @@ public class Hero extends CharacterImpl {
             if (canGoLeft()) {
                 x = x - SPEED;
                 direction = false;
+                lastMoveTime = System.currentTimeMillis();
             }
         }
 
@@ -59,6 +61,7 @@ public class Hero extends CharacterImpl {
             if (canGoRight()) {
                 x = x + SPEED;
                 direction = true;
+                lastMoveTime = System.currentTimeMillis();
             }
         }
 
@@ -66,6 +69,10 @@ public class Hero extends CharacterImpl {
             jump();
             inJump = true;
             canJump = false;
+        }
+
+        if (keyMaps.get(-1)) {
+            attack1();
         }
 
 //        if (keyMaps.get((int) 'w')) {
@@ -83,5 +90,7 @@ public class Hero extends CharacterImpl {
         } else {
             gravity();
         }
+
+        //todo: collision
     }
 }

@@ -3,6 +3,7 @@ package logic.objects.active;
 import logic.Game;
 import logic.objects.GameObject;
 import util.Animation;
+import util.Constants;
 import util.MapExplaining;
 
 import java.awt.image.BufferedImage;
@@ -18,8 +19,13 @@ abstract public class CharacterImpl extends GameObject implements Character {
     protected int currentJumpHeight;
 
     protected boolean direction = true;
-    protected boolean canJump = true;
-    protected boolean inJump = false;
+
+
+    protected long lastMoveTime;
+
+    public CharacterImpl() {
+        super();
+    }
 
     public int getCharacterHeight() {
         return characterHeight;
@@ -56,7 +62,7 @@ abstract public class CharacterImpl extends GameObject implements Character {
 
 
     protected boolean canGoLeft() {
-        String[][] mass = Game.game.getEnvironment().getMap();
+        String[][] mass = Game.game.getEnvironment().getEnviroment();
         int line;
         int col;
 
@@ -76,7 +82,7 @@ abstract public class CharacterImpl extends GameObject implements Character {
     }
 
     protected boolean canGoRight() {
-        String[][] mass = Game.game.getEnvironment().getMap();
+        String[][] mass = Game.game.getEnvironment().getEnviroment();
         int line;
         int col;
 
@@ -95,7 +101,7 @@ abstract public class CharacterImpl extends GameObject implements Character {
     }
 
     protected boolean onFloor() {
-        String[][] mass = Game.game.getEnvironment().getMap();
+        String[][] mass = Game.game.getEnvironment().getEnviroment();
         int line;
         int col;
         line = (int) (getY() + characterHeight + SPEED + 1) / Game.SIZE;
@@ -113,7 +119,7 @@ abstract public class CharacterImpl extends GameObject implements Character {
     }
 
     protected boolean onTop() {
-        String[][] mass = Game.game.getEnvironment().getMap();
+        String[][] mass = Game.game.getEnvironment().getEnviroment();
         int line;
         int col;
         line = (int) (getY() - SPEED - 1) / Game.SIZE;
@@ -140,7 +146,12 @@ abstract public class CharacterImpl extends GameObject implements Character {
     }
 
     public BufferedImage getNextImage() {
-        return animation.getImage(direction);
+        if (System.currentTimeMillis() - lastMoveTime >= Constants.FRAME_TIME) {
+            return animation.getStayImage(direction);
+        } else {
+            return animation.getRunImage(direction);
+        }
+
     }
 
     protected boolean canGoThrough(String cell) {
