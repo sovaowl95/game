@@ -1,6 +1,8 @@
 package logic.world;
 
 import logic.Game;
+import logic.objects.active.Enemy;
+import util.Constants;
 import util.MapExplaining;
 
 import java.io.BufferedReader;
@@ -10,13 +12,13 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnviromentCollection {
+public class EnvironmentCollection {
     private List<Environment> allEnvironment;
 
     private int level;
     public static String[][] map;
 
-    public EnviromentCollection(int level) {
+    public EnvironmentCollection(int level) {
         this.allEnvironment = new ArrayList<>();
         this.level = level;
         init();
@@ -25,8 +27,9 @@ public class EnviromentCollection {
     private void init() {
         //todo: INITIALIZATION ENV BY LEVEL
         loadMap();
-        showMap();
+//        showMap();
         setSpawnPosition();
+        spawnEnemies();
         changeHeroPointToAir();
         initEnviroment();
     }
@@ -67,20 +70,20 @@ public class EnviromentCollection {
     }
 
 
-    private void showMap() {
-        for (int i = 0; i < map.length; i++) {
-            for (int j = 0; j < map[i].length; j++) {
-                System.out.print(String.format("%2s ", map[i][j]));
-            }
-            System.out.println();
-        }
-    }
+//    private void showMap() {
+//        for (int i = 0; i < map.length; i++) {
+//            for (int j = 0; j < map[i].length; j++) {
+//                System.out.print(String.format("%2s ", map[i][j]));
+//            }
+//            System.out.println();
+//        }
+//    }
 
     private void changeHeroPointToAir() {
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
-                if (map[i][j].equals("P")) {
-                    map[i][j] = "O";
+                if (map[i][j].equals(Constants.HERO)) {
+                    map[i][j] = Constants.AIR;
                     return;
                 }
             }
@@ -92,18 +95,23 @@ public class EnviromentCollection {
     private void setSpawnPosition() {
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
-                if (map[i][j].equals("P")) {
-                    Game.game.getHero().setX(j * Game.SIZE + Game.SIZE / 2 - (Game.game.getHero().getWidth() / 2));
+                if (map[i][j].equals(Constants.HERO)) {
+                    Game.game.getHero().setX(j * Game.SIZE + Game.SIZE / 2 - (Game.game.getHero().getCharacterWidth() / 2));
                     Game.game.getHero().setY(i * Game.SIZE);
-//
-//                    Game.game.getHero().setX(0);
-//                    Game.game.getHero().setY(0);
+                }
+            }
+        }
+    }
 
-
-//                    System.out.println("_--- ");
-//                    System.out.println(Game.SIZE);
-//                    System.out.println(j * Game.SIZE + Game.SIZE / 2 - (Game.game.getHero().getWidth() / 2));
-//                    System.out.println(i * Game.SIZE);
+    private void spawnEnemies() {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
+                if (MapExplaining.isEnemy(map[i][j])) {
+                    Enemy enemy = new Enemy();
+                    Game.game.getEnemiesArrayList().add(enemy);
+                    enemy.setX(j * Game.SIZE + Game.SIZE / 2 - (enemy.getCharacterWidth() / 2));
+                    enemy.setY(i * Game.SIZE);
+                    map[i][j] = Constants.AIR;
                 }
             }
         }
@@ -114,7 +122,7 @@ public class EnviromentCollection {
         return allEnvironment;
     }
 
-    public String[][] getMass() {
+    public String[][] getMap() {
         return map;
     }
 

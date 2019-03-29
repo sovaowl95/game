@@ -21,7 +21,7 @@ abstract public class Environment extends GameObject {
         int width = MapExplaining.getImageByExp(name).getWidth();
 
         if (x <= -width) {
-            x = Game.SIZE * EnviromentCollection.map.length + width;
+            x = Game.SIZE * EnvironmentCollection.map.length + width;
         } else {
             x = x - SPEED;
         }

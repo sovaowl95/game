@@ -1,15 +1,19 @@
 package logic.objects.active;
 
-import logic.objects.active.CharacterImpl;
+import util.Animation;
+
+import java.awt.image.BufferedImage;
 
 public class Enemy extends CharacterImpl {
-    @Override
-    public void move() {
 
+    public Enemy() {
+        SPEED = 5;
+        animation = new Animation();
+        animation.init();
     }
 
     @Override
-    public void jump() {
+    public void move() {
 
     }
 
@@ -25,6 +29,18 @@ public class Enemy extends CharacterImpl {
 
     @Override
     public void update() {
+        gravity();
 
+        if (canGoRight() && direction) {
+            x += SPEED;
+        } else {
+            direction = false;
+        }
+
+        if (canGoLeft() && !direction) {
+            x -= SPEED;
+        } else {
+            direction = true;
+        }
     }
 }

@@ -1,35 +1,37 @@
 package logic;
 
 import gui.GameGUI;
+import logic.objects.active.Enemy;
 import logic.objects.active.Hero;
-import logic.world.EnviromentCollection;
+import logic.world.EnvironmentCollection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 public class Game implements Runnable {
     private boolean pause = true;
     private Hero hero;
-    private EnviromentCollection environment;
+    private ArrayList<Enemy> enemiesArrayList;
+    private EnvironmentCollection environment;
     private HashMap<Integer, Boolean> keyMaps;
     public static Game game;
     private int level = 1;
 
     public static final int SIZE = GameGUI.gameGUI.getHeight() / 7;
-//public static final int SIZE = 32;
+
     public Game() {
         game = this;
     }
 
     public void init() {
         keyMaps = new HashMap<>();
-//        keyMaps.put((int)'w', false);
-        keyMaps.put((int)'a', false);
-//        keyMaps.put((int)'s', false);
-        keyMaps.put((int)'d', false);
+        keyMaps.put((int) 'a', false);
+        keyMaps.put((int) 'd', false);
         keyMaps.put((int) ' ', false);
         hero = new Hero();
-        environment = new EnviromentCollection(level);
+        enemiesArrayList = new ArrayList<>();
+        environment = new EnvironmentCollection(level);
     }
 
     public void unpause() {
@@ -58,15 +60,17 @@ public class Game implements Runnable {
             keyMaps.put((int) 'd', status);
         }
 
-        if (num == ' '){
-            keyMaps.put((int)' ', status);
+        if (num == ' ') {
+            keyMaps.put((int) ' ', status);
         }
     }
 
     public void updateAll() {
         hero.update();
+        for (int i = 0; i < enemiesArrayList.size(); i++) {
+            enemiesArrayList.get(i).update();
+        }
         environment.update();
-        //todo: world update
     }
 
     @Override
@@ -88,34 +92,49 @@ public class Game implements Runnable {
                 e.printStackTrace();
             }
         }
-
     }
 
     public boolean isPause() {
         return pause;
     }
+
     public void setPause(boolean pause) {
         this.pause = pause;
     }
+
     public Hero getHero() {
         return hero;
     }
+
     public void setHero(Hero hero) {
         this.hero = hero;
     }
-    public EnviromentCollection getEnvironment() {
+
+    public EnvironmentCollection getEnvironment() {
         return environment;
     }
+
     public int getLevel() {
         return level;
     }
+
     public void setLevel(int level) {
         this.level = level;
     }
+
     public HashMap<Integer, Boolean> getKeyMaps() {
         return keyMaps;
     }
+
     public void setKeyMaps(HashMap<Integer, Boolean> keyMaps) {
         this.keyMaps = keyMaps;
+    }
+
+    public ArrayList<Enemy> getEnemiesArrayList() {
+        return enemiesArrayList;
+    }
+
+    public void setEnemiesArrayList(ArrayList<Enemy> enemiesArrayList) {
+        this.enemiesArrayList = enemiesArrayList;
     }
 }

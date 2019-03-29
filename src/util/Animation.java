@@ -1,41 +1,41 @@
-package logic;
+package util;
 
-import javax.imageio.ImageIO;
+import logic.Game;
+
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Animation {
-    private static ArrayList<BufferedImage> imagesHeroWalk;
-    private static HeroThreadAnimation thread;
+    private ArrayList<BufferedImage> imagesCharacterWalk;
+    private CharacterThreadAnimation thread;
 
-    static {
-        imagesHeroWalk = new ArrayList<>();
-        loadHeroMoveAnimations();
-        thread = new HeroThreadAnimation(imagesHeroWalk.size());
+    public void init() {
+        imagesCharacterWalk = new ArrayList<>();
+        loadCharacterMoveAnimations();
+        thread = new CharacterThreadAnimation(imagesCharacterWalk.size());
         thread.start();
     }
 
-    public static void loadHeroMoveAnimations() {
+    private void loadCharacterMoveAnimations() {
         for (int i = 0; i < 10; i++) {
-//            BufferedImage bufferedImage = loadImage("CharacterSprites/Run/" + i + ".png");
-            BufferedImage bufferedImage = loadImage("hero2/" + i + ".png");
-            imagesHeroWalk.add(bufferedImage);
+            BufferedImage bufferedImage = ImageLoader.loadImage("hero2/" + i + ".png");
+            imagesCharacterWalk.add(bufferedImage);
         }
     }
 
 
     //false = left;
     //true = right;
-    public static BufferedImage getImage(boolean direction, int heroHeight, int heroWidth) {
+    public BufferedImage getImage(boolean direction) {
         int frameNum = thread.getFrameNum();
         BufferedImage image;
         if (direction) {
-            image = imagesHeroWalk.get(frameNum);
+            image = imagesCharacterWalk.get(frameNum);
         } else {
-            BufferedImage bufferedImage = imagesHeroWalk.get(frameNum);
+            BufferedImage bufferedImage = imagesCharacterWalk.get(frameNum);
             AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
             tx.translate(-bufferedImage.getWidth(null), 0);
             AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
@@ -44,36 +44,20 @@ public class Animation {
         }
 
         AffineTransform tx = new AffineTransform();
-        double xScale = Game.game.getHero().getWidth() * 1.0 / image.getWidth();
-        double yScale = Game.game.getHero().getHeight() * 1.0 /image.getHeight();
-        System.out.println("xScale = " + xScale);
-        System.out.println("yScale = " + yScale);
+        double xScale = Game.game.getHero().getCharacterWidth() * 1.0 / image.getWidth();
+        double yScale = Game.game.getHero().getCharacterHeight() * 1.0 / image.getHeight();
         tx.scale(xScale, yScale);
         AffineTransformOp scale = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-//        BufferedImage res = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        BufferedImage res = new BufferedImage(Game.game.getHero().getWidth(), Game.game.getHero().getHeight(), BufferedImage.TYPE_INT_ARGB);
-//        BufferedImage res = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage res = new BufferedImage(
+                Game.game.getHero().getCharacterWidth(),
+                Game.game.getHero().getCharacterHeight(),
+                BufferedImage.TYPE_INT_ARGB);
         res = scale.filter(image, res);
         return res;
     }
-
-
-    private static BufferedImage loadImage(String name) {
-        File file = new File("");
-        BufferedImage bufferedImage;
-        try {
-            File file1 = new File(file.getAbsoluteFile() + "/resources/" + name);
-            System.out.println(file1);
-            bufferedImage = ImageIO.read(file1);
-            return bufferedImage;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }
 
-class HeroThreadAnimation extends Thread {
+class CharacterThreadAnimation extends Thread {
     private int frameNum;
     private long lastFrameChangeTime;
     private long nextFrameIn;
@@ -81,12 +65,12 @@ class HeroThreadAnimation extends Thread {
     private int frameTime;
     private int numberOfSprites;
 
-    public HeroThreadAnimation(int size) {
+    CharacterThreadAnimation(int size) {
         this.numberOfSprites = size;
         frameTime = 1000 / size;
     }
 
-    public int getFrameNum() {
+    int getFrameNum() {
         return frameNum;
     }
 
@@ -108,6 +92,11 @@ class HeroThreadAnimation extends Thread {
                         nextFrameIn = 0;
                     }
                 }
+            }
+            try {
+                TimeUnit.MILLISECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }
