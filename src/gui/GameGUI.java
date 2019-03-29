@@ -2,8 +2,10 @@ package gui;
 
 import logic.Game;
 import logic.objects.GameObject;
+import logic.objects.Item;
 import logic.objects.active.Enemy;
 import util.Constants;
+import util.ItemLoader;
 import util.MapExplaining;
 
 import javax.swing.*;
@@ -34,7 +36,7 @@ public class GameGUI extends JPanel implements Runnable {
         setBackground(Color.black);
         setFocusable(true);
         requestFocusInWindow();
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//        setCursor(Cursor.getPredefinedCursor(Cursor.));
     }
 
     public void unpause() {
@@ -61,7 +63,7 @@ public class GameGUI extends JPanel implements Runnable {
             repaint();
             endFrameTime = System.currentTimeMillis();
             long sleepTime;
-            sleepTime= Constants.FRAME_TIME - (endFrameTime - startFrameTime);
+            sleepTime = Constants.FRAME_TIME - (endFrameTime - startFrameTime);
             try {
                 TimeUnit.MILLISECONDS.sleep(sleepTime);
             } catch (InterruptedException e) {
@@ -106,6 +108,7 @@ public class GameGUI extends JPanel implements Runnable {
         drawBack(g);
 //        System.out.println(System.currentTimeMillis() - time);
 
+
         //map
         drawMap(g);
 //        System.out.println(System.currentTimeMillis() - time);
@@ -116,9 +119,10 @@ public class GameGUI extends JPanel implements Runnable {
         //enemies
         drawEnemies(g);
 
+
+        drawItems(g);
+
         drawTopMap(g);
-//        System.out.println(System.currentTimeMillis() - time);
-//        System.out.println("-------------\n\n");
     }
 
     private void drawHeroes(Graphics g) {
@@ -140,10 +144,10 @@ public class GameGUI extends JPanel implements Runnable {
         }
     }
 
-    private void drawBack(Graphics g) {
-        //https://stackoverflow.com/questions/658059/graphics-drawimage-in-java-is-extremely-slow-on-some-computers-yet-much-faster
+    //https://stackoverflow.com/questions/658059/graphics-drawimage-in-java-is-extremely-slow-on-some-computers-yet-much-faster
 //        long time = System.currentTimeMillis();
-        List<GameObject> allEnvironment = game.getEnvironment().getAllEnvironment();
+    private void drawBack(Graphics g) {
+        List<GameObject> allEnvironment = game.getEnvironment().getBackgroundEnv();
         for (int i = 0; i < allEnvironment.size(); i++) {
             BufferedImage image = allEnvironment.get(i).getImage();
             int x = (int) allEnvironment.get(i).getX();
@@ -153,10 +157,16 @@ public class GameGUI extends JPanel implements Runnable {
             }
             g.drawImage(image, x, y, null);
         }
-//        long exit = System.currentTimeMillis();
-//        if (exit - time > 15){
-//            System.out.println("!!!" + (exit - time));
-//        }
+    }
+
+    private void drawItems(Graphics g) {
+        List<Item> items = game.getEnvironment().getItemList();
+        for (int i = 0; i < items.size(); i++) {
+            BufferedImage image = items.get(i).getImage();
+            int x = (int) items.get(i).getX();
+            int y = (int) items.get(i).getY();
+            g.drawImage(image, x, y, null);
+        }
     }
 
     private void drawMap(Graphics g) {
