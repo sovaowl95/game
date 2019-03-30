@@ -4,12 +4,16 @@ import logic.objects.Item;
 import util.Animation;
 import logic.Game;
 import util.Constants;
+import util.SoundsUtil;
 
 import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 
 public class Hero extends CharacterImpl {
+    private long lastTimeSoundPlayed;
+    private long timeSpaceSoundEff = 500;
+
     public Hero() {
         super();
         SPEED = 5;
@@ -37,7 +41,6 @@ public class Hero extends CharacterImpl {
                     getCharacterHeight()
             )) {
                 //instanceof Potion (class extended Item)
-                //Game.game.
                 itemList.remove(item);
                 takePotion();
             }
@@ -46,33 +49,44 @@ public class Hero extends CharacterImpl {
 
     @Override
     public void attack1() {
-        boolean att = false;
+        boolean hit = false;
         if (lastAttTime + timeoutBeforeNextAtt <= System.currentTimeMillis()) {
-            att = true;
+            lastAttTime = System.currentTimeMillis();
             for (int i = 0; i < Game.game.getEnemiesArrayList().size(); i++) {
                 Enemy enemy = Game.game.getEnemiesArrayList().get(i);
                 Rectangle hitbox = new Rectangle(
                         (int) enemy.getX(),
                         (int) enemy.getY(),
-                        enemy.characterWidth,
-                        enemy.characterHeight);
-                if (hitbox.intersects(
-                        getX(),
-                        getY(),
-                        getCharacterWidth(),
-                        getCharacterHeight()
-                )) {
+                        enemy.getCharacterWidth(),
+                        enemy.getCharacterHeight());
+
+                int x = (int) getX();
+                int y = (int) getY();
+
+                if (!direction) {
+                    x -= getCharacterWidth();
+                } else {
+                    x += getCharacterWidth();
+                }
+
+                if (hitbox.intersects(x, y, getCharacterWidth(), getCharacterHeight())) {
+                    hit = true;
                     enemy.takeDmg(dmg);
                     if (!enemy.isAlive()) {
                         Game.game.getEnemiesArrayList().remove(enemy);
                     }
                 }
             }
+
+            String soundName = "SwordSwoosh.wav";
+            if (hit) {
+                soundName = "SwordAttack.wav";
+            }
+            SoundsUtil soundsUtil = new SoundsUtil(soundName);
+            soundsUtil.start();
         }
 
-        if (att) {
-            lastAttTime = System.currentTimeMillis();
-        }
+
     }
 
     @Override
@@ -88,6 +102,7 @@ public class Hero extends CharacterImpl {
                 x = x - SPEED;
                 direction = false;
                 lastMoveTime = System.currentTimeMillis();
+                playFootstepSound();
             }
         }
 
@@ -96,6 +111,7 @@ public class Hero extends CharacterImpl {
                 x = x + SPEED;
                 direction = true;
                 lastMoveTime = System.currentTimeMillis();
+                playFootstepSound();
             }
         }
 
@@ -126,5 +142,13 @@ public class Hero extends CharacterImpl {
         }
 
         move();
+    }
+
+    private void playFootstepSound() {
+        if (System.currentTimeMillis() - lastTimeSoundPlayed >= timeSpaceSoundEff) {
+            lastTimeSoundPlayed = System.currentTimeMillis();
+            SoundsUtil soundsUtil = new SoundsUtil("footstep.wav");
+            soundsUtil.start();
+        }
     }
 }

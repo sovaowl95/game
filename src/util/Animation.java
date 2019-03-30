@@ -13,8 +13,10 @@ public class Animation {
     private int numOfFrames;
     private ArrayList<BufferedImage> imagesCharacterRun;
     private ArrayList<BufferedImage> imagesCharacterStay;
+    private ArrayList<BufferedImage> imagesCharacterAtt;
     private CharacterThreadAnimation threadRun;
     private CharacterThreadAnimation threadStay;
+    private CharacterThreadAnimation threadAtt;
 
     public Animation(String path, int numOfFrames) {
         this.path = path;
@@ -28,11 +30,17 @@ public class Animation {
         imagesCharacterStay = new ArrayList<>();
         loadCharacterStayAnimations();
 
+        imagesCharacterAtt = new ArrayList<>();
+        loadCharacterAttAnimations();
+
         threadRun = new CharacterThreadAnimation(imagesCharacterRun.size());
         threadRun.start();
 
         threadStay = new CharacterThreadAnimation(imagesCharacterStay.size());
         threadStay.start();
+
+        threadAtt = new CharacterThreadAnimation(imagesCharacterAtt.size());
+        threadAtt.start();
     }
 
     private void loadCharacterMoveAnimations() {
@@ -49,11 +57,19 @@ public class Animation {
         }
     }
 
+    private void loadCharacterAttAnimations() {
+        for (int i = 0; i < numOfFrames; i++) {
+            BufferedImage bufferedImage = ImageLoader.loadImage(String.format(path, "_att", i));
+            imagesCharacterAtt.add(bufferedImage);
+        }
+    }
+
 
     //false = left;
     //true = right;
     public BufferedImage getRunImage(boolean direction) {
         threadStay.setFrameNum(0);
+        threadAtt.setFrameNum(0);
         int frameNum = threadRun.getFrameNum();
         BufferedImage image;
         if (direction) {
@@ -82,12 +98,42 @@ public class Animation {
 
     public BufferedImage getStayImage(boolean direction) {
         threadRun.setFrameNum(0);
+        threadAtt.setFrameNum(0);
         int frameNum = threadStay.getFrameNum();
         BufferedImage image;
         if (direction) {
             image = imagesCharacterStay.get(frameNum);
         } else {
             BufferedImage bufferedImage = imagesCharacterStay.get(frameNum);
+            AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
+            tx.translate(-bufferedImage.getWidth(null), 0);
+            AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+            bufferedImage = op.filter(bufferedImage, null);
+            image = bufferedImage;
+        }
+
+        AffineTransform tx = new AffineTransform();
+        double xScale = Game.game.getHero().getCharacterWidth() * 1.0 / image.getWidth();
+        double yScale = Game.game.getHero().getCharacterHeight() * 1.0 / image.getHeight();
+        tx.scale(xScale, yScale);
+        AffineTransformOp scale = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+        BufferedImage res = new BufferedImage(
+                Game.game.getHero().getCharacterWidth(),
+                Game.game.getHero().getCharacterHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+        res = scale.filter(image, res);
+        return res;
+    }
+
+    public BufferedImage getAttackImage(boolean direction) {
+        threadRun.setFrameNum(0);
+        threadStay.setFrameNum(0);
+        int frameNum = threadAtt.getFrameNum();
+        BufferedImage image;
+        if (direction) {
+            image = imagesCharacterAtt.get(frameNum);
+        } else {
+            BufferedImage bufferedImage = imagesCharacterAtt.get(frameNum);
             AffineTransform tx = AffineTransform.getScaleInstance(-1, 1);
             tx.translate(-bufferedImage.getWidth(null), 0);
             AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);

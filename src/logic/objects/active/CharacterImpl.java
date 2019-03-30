@@ -12,8 +12,6 @@ import java.awt.image.BufferedImage;
 abstract public class CharacterImpl extends GameObject implements Character {
     protected Animation animation;
 
-    protected int characterHeight = 64;
-    protected int characterWidth = 64;
 
     protected int jumpHeight = 150;
     protected int currentJumpHeight;
@@ -31,22 +29,6 @@ abstract public class CharacterImpl extends GameObject implements Character {
 
     public CharacterImpl() {
         super();
-    }
-
-    public int getCharacterHeight() {
-        return characterHeight;
-    }
-
-    public void setCharacterHeight(int characterHeight) {
-        this.characterHeight = characterHeight;
-    }
-
-    public int getCharacterWidth() {
-        return characterWidth;
-    }
-
-    public void setCharacterWidth(int characterWidth) {
-        this.characterWidth = characterWidth;
     }
 
 
@@ -152,12 +134,14 @@ abstract public class CharacterImpl extends GameObject implements Character {
     }
 
     public BufferedImage getNextImage() {
-        if (System.currentTimeMillis() - lastMoveTime >= Constants.FRAME_TIME) {
+        if (System.currentTimeMillis() - lastAttTime <= Constants.FRAME_TIME * 100) {
+            System.out.println("ANIM - ATT");
+            return animation.getAttackImage(direction);
+        } else if (System.currentTimeMillis() - lastMoveTime >= Constants.FRAME_TIME) {
             return animation.getStayImage(direction);
         } else {
             return animation.getRunImage(direction);
         }
-
     }
 
     protected boolean takeDmg(int dmg) {

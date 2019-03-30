@@ -10,8 +10,7 @@ public class Item extends GameObject {
 
     @Override
     public void update() {
-        //todo: grav   ity
-//        gravity();
+        gravity();
     }
 
 

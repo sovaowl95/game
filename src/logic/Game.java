@@ -20,7 +20,7 @@ public class Game implements Runnable {
     private int level = 1;
 
     public static final int SIZE = GameGUI.gameGUI.getHeight() / 7;
-
+//public static final int SIZE = 111;
     public Game() {
         game = this;
     }
@@ -101,11 +101,9 @@ public class Game implements Runnable {
     public void run() {
         while (!Thread.interrupted()) {
             while (!isPause() && !Thread.interrupted()) {
-//                System.out.println(Thread.currentThread().getName());
                 try {
                     long time = System.currentTimeMillis();
                     updateAll();
-                    //todo: correct timeout
                     TimeUnit.MILLISECONDS.sleep(16 - (System.currentTimeMillis() - time));
                 } catch (InterruptedException e) {
                     e.printStackTrace();

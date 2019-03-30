@@ -9,7 +9,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class MainFrame extends JFrame{
+public class MainFrame extends JFrame {
     private int width;
     private int height;
     private boolean fullscreen;
@@ -46,7 +46,8 @@ public class MainFrame extends JFrame{
         setFocusTraversalKeysEnabled(false);
         addKeyListener(new KeyListener() {
             @Override
-            public void keyTyped(KeyEvent e) {}
+            public void keyTyped(KeyEvent e) {
+            }
 
             @Override
             public void keyPressed(KeyEvent e) {
@@ -62,11 +63,12 @@ public class MainFrame extends JFrame{
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
-//                Game.game.setKeyStatus(-1, true);
+
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
+//                System.out.println(Game.game);
                 Game.game.setKeyStatus(-1, true);
             }
 
