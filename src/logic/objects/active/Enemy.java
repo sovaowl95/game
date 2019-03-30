@@ -2,8 +2,6 @@ package logic.objects.active;
 
 import util.Animation;
 
-import java.awt.image.BufferedImage;
-
 public class Enemy extends CharacterImpl {
 
     public Enemy() {

@@ -20,8 +20,14 @@ abstract public class CharacterImpl extends GameObject implements Character {
 
     protected boolean direction = true;
 
-
     protected long lastMoveTime;
+
+    protected int currentHp = 50;
+    protected int maxHp = 50;
+    protected int dmg = 10;
+
+    protected long lastAttTime;
+    protected long timeoutBeforeNextAtt = 1000;
 
     public CharacterImpl() {
         super();
@@ -152,6 +158,23 @@ abstract public class CharacterImpl extends GameObject implements Character {
             return animation.getRunImage(direction);
         }
 
+    }
+
+    protected boolean takeDmg(int dmg) {
+        currentHp = currentHp - dmg;
+        return true;
+    }
+
+    protected boolean isAlive() {
+        return currentHp > 0;
+    }
+
+    protected boolean takePotion() {
+        currentHp += Constants.HEALING_POTION_SIZE;
+        if (currentHp > maxHp) {
+            currentHp = maxHp;
+        }
+        return true;
     }
 
     protected boolean canGoThrough(String cell) {

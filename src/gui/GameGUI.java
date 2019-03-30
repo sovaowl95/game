@@ -26,6 +26,7 @@ public class GameGUI extends JPanel implements Runnable {
 
 
     public void init(int width, int height) {
+        removeAll();
         this.width = width;
         this.height = height;
         gameGUI = this;
@@ -59,6 +60,7 @@ public class GameGUI extends JPanel implements Runnable {
         long startFrameTime;
         long endFrameTime;
         while (!game.isPause()) {
+            System.out.println(Thread.currentThread().getName());
             startFrameTime = System.currentTimeMillis();
             repaint();
             endFrameTime = System.currentTimeMillis();
@@ -74,23 +76,17 @@ public class GameGUI extends JPanel implements Runnable {
 
     @Override
     protected void paintComponent(Graphics g) {
-//        long time = System.currentTimeMillis();
+
+        System.out.println(Thread.currentThread().getName());
+        long time = System.currentTimeMillis();
+
         super.paintComponent(g);
+        System.out.println("SUPER TIME: " +(System.currentTimeMillis() - time));
+
 
         double x = game.getHero().getX() + game.getHero().getCharacterWidth() / 2;
-//        double y = game.getHero().getY();
-
+        double y = game.getHero().getY();
         int mapLength = game.getEnvironment().getEnviroment()[0].length * Game.SIZE;
-
-//        System.out.println("---");
-//        System.out.println("width = " + width);
-//        System.out.println("x = " + x);
-//        System.out.println("translateX = " + translateX);
-//        System.out.println("map length= " + mapLength);
-//        System.out.println("res: " + (mapLength - x));
-//        System.out.println("---");
-
-
         boolean rightSide = x > width / 2;
         boolean leftSide = mapLength - x - width / 2 > 0;
         if (rightSide && leftSide) {
@@ -102,28 +98,36 @@ public class GameGUI extends JPanel implements Runnable {
         }
         g.translate(translateX, translateY);
 
-//        System.out.println(System.currentTimeMillis() - time);
+        System.out.println("TRANSLATE TIME: " +(System.currentTimeMillis() - time));
 
         //background
         drawBack(g);
-//        System.out.println(System.currentTimeMillis() - time);
+        System.out.println("BACK TIME: " +(System.currentTimeMillis() - time));
 
 
         //map
         drawMap(g);
-//        System.out.println(System.currentTimeMillis() - time);
+        System.out.println("MAP TIME: " +(System.currentTimeMillis() - time));
 
         //hero
         drawHeroes(g);
+        System.out.println("HERO TIME: " +(System.currentTimeMillis() - time));
 
         //enemies
         drawEnemies(g);
-
+        System.out.println("ENEMIES TIME: " +(System.currentTimeMillis() - time));
 
         drawItems(g);
+        System.out.println("ITEMS TIME: " +(System.currentTimeMillis() - time));
 
         drawTopMap(g);
+        System.out.println("TOP MAP TIME: " +(System.currentTimeMillis() - time));
+
+        //todo: DMG
+        drawDmg(g);
+        System.out.println("DMG TIME: " +(System.currentTimeMillis() - time));
     }
+
 
     private void drawHeroes(Graphics g) {
         g.drawImage(
@@ -135,13 +139,22 @@ public class GameGUI extends JPanel implements Runnable {
 
     private void drawEnemies(Graphics g) {
         for (int i = 0; i < game.getEnemiesArrayList().size(); i++) {
+            System.out.println("i = " + i);
             Enemy enemy = game.getEnemiesArrayList().get(i);
+            long time = System.currentTimeMillis();
+            BufferedImage nextImage = enemy.getNextImage();
+            System.out.println("time to get img" + (System.currentTimeMillis() - time));
             g.drawImage(
-                    enemy.getNextImage(),
+                    nextImage,
                     (int) enemy.getX(),
                     (int) enemy.getY(),
                     null);
+            System.out.println("time to draw enemy" + (System.currentTimeMillis() - time));
         }
+    }
+
+    private void drawDmg(Graphics g) {
+
     }
 
     //https://stackoverflow.com/questions/658059/graphics-drawimage-in-java-is-extremely-slow-on-some-computers-yet-much-faster

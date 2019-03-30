@@ -1,44 +1,78 @@
 package logic.objects.active;
 
+import logic.objects.Item;
 import util.Animation;
 import logic.Game;
-import util.MapExplaining;
+import util.Constants;
 
-import java.awt.image.BufferedImage;
+import java.awt.*;
 import java.util.HashMap;
+import java.util.List;
 
 public class Hero extends CharacterImpl {
     public Hero() {
         super();
         SPEED = 5;
+        dmg = 26;
+        currentHp = 10;
+        maxHp = 100;
         animation = new Animation("hero2%s/%d.png", 10);
         animation.init();
     }
 
     @Override
     public void move() {
-
+        List<Item> itemList = Game.game.getEnvironment().getItemList();
+        for (int i = 0; i < itemList.size(); i++) {
+            Item item = itemList.get(i);
+            Rectangle rectangle = new Rectangle(
+                    (int) item.getX(),
+                    (int) item.getY(),
+                    Constants.ITEM_SIZE,
+                    Constants.ITEM_SIZE);
+            if (rectangle.intersects(
+                    getX(),
+                    getY(),
+                    getCharacterWidth(),
+                    getCharacterHeight()
+            )) {
+                //instanceof Potion (class extended Item)
+                //Game.game.
+                itemList.remove(item);
+                takePotion();
+            }
+        }
     }
-
-//    @Override
-//    public void jump() {
-//        if (!onTop()) {
-//            if (currentJumpHeight - SPEED <= jumpHeight) {
-//                y = y - SPEED;
-//                currentJumpHeight = currentJumpHeight + SPEED;
-//            } else {
-//                y = y - Math.abs(jumpHeight - currentJumpHeight);
-//                currentJumpHeight = 0;
-//                inJump = false;
-//            }
-//        } else {
-//            inJump = false;
-//        }
-//    }
 
     @Override
     public void attack1() {
-        //todo:
+        boolean att = false;
+        if (lastAttTime + timeoutBeforeNextAtt <= System.currentTimeMillis()) {
+            att = true;
+            for (int i = 0; i < Game.game.getEnemiesArrayList().size(); i++) {
+                Enemy enemy = Game.game.getEnemiesArrayList().get(i);
+                Rectangle hitbox = new Rectangle(
+                        (int) enemy.getX(),
+                        (int) enemy.getY(),
+                        enemy.characterWidth,
+                        enemy.characterHeight);
+                if (hitbox.intersects(
+                        getX(),
+                        getY(),
+                        getCharacterWidth(),
+                        getCharacterHeight()
+                )) {
+                    enemy.takeDmg(dmg);
+                    if (!enemy.isAlive()) {
+                        Game.game.getEnemiesArrayList().remove(enemy);
+                    }
+                }
+            }
+        }
+
+        if (att) {
+            lastAttTime = System.currentTimeMillis();
+        }
     }
 
     @Override
@@ -91,6 +125,6 @@ public class Hero extends CharacterImpl {
             gravity();
         }
 
-        //todo: collision
+        move();
     }
 }

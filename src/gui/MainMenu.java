@@ -15,7 +15,7 @@ public class MainMenu extends JPanel {
     private BufferedImage img;
 
     public void init(int width, int height) {
-
+        removeAll();
         File file = new File("");
         try {
             img = ImageIO.read(new File(file.getAbsoluteFile() + "/resources/menu/back.jpg"));

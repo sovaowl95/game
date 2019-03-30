@@ -1,6 +1,7 @@
 package logic;
 
 import gui.GameGUI;
+import gui.MainFrame;
 import logic.objects.active.Enemy;
 import logic.objects.active.Hero;
 import logic.world.EnvironmentCollection;
@@ -33,6 +34,7 @@ public class Game implements Runnable {
         hero = new Hero();
         enemiesArrayList = new ArrayList<>();
         environment = new EnvironmentCollection(level);
+//        unpause();
     }
 
     public void unpause() {
@@ -65,7 +67,7 @@ public class Game implements Runnable {
             keyMaps.put((int) ' ', status);
         }
 
-        if (num == -1){
+        if (num == -1) {
             keyMaps.put(-1, status);
         }
     }
@@ -76,12 +78,30 @@ public class Game implements Runnable {
             enemiesArrayList.get(i).update();
         }
         environment.update();
+
+        if (enemiesArrayList.size() == 0) {
+            level++;
+            if (level == 3) {
+//                pause();
+                MainFrame.getMainFrame().launchMainMenu();
+            } else {
+//                pause();
+//                hero = null;
+//                enemiesArrayList.clear();
+//                enemiesArrayList = null;
+//                environment.getItemList().clear();
+//                environment.getBackgroundEnv().clear();
+//                environment = null;
+                init();
+            }
+        }
     }
 
     @Override
     public void run() {
-        while (true) {
-            while (!isPause()) {
+        while (!Thread.interrupted()) {
+            while (!isPause() && !Thread.interrupted()) {
+//                System.out.println(Thread.currentThread().getName());
                 try {
                     long time = System.currentTimeMillis();
                     updateAll();

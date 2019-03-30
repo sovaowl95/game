@@ -37,7 +37,7 @@ public class MainFrame extends JFrame{
         }
         setTitle(TITLE);
         setResizable(true);
-        GAME_GUI.init(width, height);
+//        GAME_GUI.init(width, height);
         MAIN_MENU.init(width, height);
         add(MAIN_MENU);
         setVisible(true);
@@ -94,10 +94,20 @@ public class MainFrame extends JFrame{
 
     public void launchGame() {
         remove(MAIN_MENU);
+        GAME_GUI.init(width, height);
         add(GAME_GUI);
         revalidate();
         repaint();
         GAME_GUI.unpause();
+    }
+
+    public void launchMainMenu() {
+        remove(GAME_GUI);
+        MAIN_MENU.init(width, height);
+        add(MAIN_MENU);
+        revalidate();
+        repaint();
+        GAME_GUI.pause();
     }
 
     public void launchOptions() {

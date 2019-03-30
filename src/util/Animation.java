@@ -109,6 +109,8 @@ public class Animation {
     }
 }
 
+
+//todo: STOP IT PLS!!!
 class CharacterThreadAnimation extends Thread {
     private int frameNum;
     private long lastFrameChangeTime;
@@ -147,9 +149,15 @@ class CharacterThreadAnimation extends Thread {
                         nextFrameIn = 0;
                     }
                 }
+                //todo: ******* THREADS
+                try {
+                    TimeUnit.MILLISECONDS.sleep(frameTime);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
             try {
-                TimeUnit.MILLISECONDS.sleep(1);
+                TimeUnit.MILLISECONDS.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
