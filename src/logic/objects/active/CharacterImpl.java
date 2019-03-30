@@ -134,7 +134,7 @@ abstract public class CharacterImpl extends GameObject implements Character {
     }
 
     public BufferedImage getNextImage() {
-        if (System.currentTimeMillis() - lastAttTime <= Constants.FRAME_TIME * 100) {
+        if (System.currentTimeMillis() - lastAttTime <= Constants.FRAME_TIME * 25) {
             System.out.println("ANIM - ATT");
             return animation.getAttackImage(direction);
         } else if (System.currentTimeMillis() - lastMoveTime >= Constants.FRAME_TIME) {

@@ -113,7 +113,11 @@ public class MainFrame extends JFrame {
     }
 
     public void launchOptions() {
-        //todo:
+        String[] list = {"123", "345", "dfsgsdf"};
+        JOptionPane.showMessageDialog(null,
+                list,
+                "TITLE",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     public void launchAbout() {

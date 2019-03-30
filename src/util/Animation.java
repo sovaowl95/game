@@ -33,13 +33,13 @@ public class Animation {
         imagesCharacterAtt = new ArrayList<>();
         loadCharacterAttAnimations();
 
-        threadRun = new CharacterThreadAnimation(imagesCharacterRun.size());
+        threadRun = new CharacterThreadAnimation(imagesCharacterRun.size(), 1000/5/imagesCharacterRun.size());
         threadRun.start();
 
-        threadStay = new CharacterThreadAnimation(imagesCharacterStay.size());
+        threadStay = new CharacterThreadAnimation(imagesCharacterStay.size(), 1000/imagesCharacterStay.size());
         threadStay.start();
 
-        threadAtt = new CharacterThreadAnimation(imagesCharacterAtt.size());
+        threadAtt = new CharacterThreadAnimation(imagesCharacterAtt.size(), 1000/5/imagesCharacterAtt.size());
         threadAtt.start();
     }
 
@@ -165,9 +165,10 @@ class CharacterThreadAnimation extends Thread {
     private int frameTime;
     private int numberOfSprites;
 
-    CharacterThreadAnimation(int size) {
+    CharacterThreadAnimation(int size, int frameTime) {
         this.numberOfSprites = size;
-        frameTime = 1000 / size;
+//        frameTime = 1000 / size;
+        this.frameTime = frameTime;
     }
 
     int getFrameNum() {
